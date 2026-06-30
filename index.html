@@ -143,7 +143,8 @@
 const WEBHOOK = "https://hook.eu2.make.com/tj5sa3qd0lnrl74yu7aqtng0l91b9rwc";
 const ARCHIVES = "https://hook.eu2.make.com/stjl8h28mj6hcs5xjqe6iicomc21iwpt";
 const DETAIL = "https://hook.eu2.make.com/89lxy8hglhn6i3arjdyxrmrexw9dibf5";
-const AUTO_REFRESH_MIN = 60;
+const AUTO_REFRESH_HOURS = 6; // onglet ouvert : rafraîchi au plus 1×/6h, et seulement s'il est visible
+let lastLoad = 0;
 const COLS = [
   {name:"Pas commencé", num:"01", hex:"#FF9B85", bg:"var(--peach-bg)",  ink:"var(--peach-ink)"},
   {name:"En cours",     num:"02", hex:"#F5C242", bg:"var(--butter-bg)", ink:"var(--butter-ink)"},
@@ -343,6 +344,7 @@ async function fetchFeed(url){
   return (data.results || []).map(mapOrder).filter(o=>o.statut);
 }
 async function load(){
+  lastLoad = Date.now();
   const ico=document.getElementById("refIco"); if(ico) ico.classList.add("spin-ico");
   try{
     const [active, archive] = await Promise.all([ fetchFeed(WEBHOOK), fetchFeed(ARCHIVES).catch(()=>[]) ]);
@@ -355,7 +357,12 @@ async function load(){
 }
 document.getElementById("refresh").addEventListener("click", load);
 load();
-setInterval(load, AUTO_REFRESH_MIN*60*1000);
+// Auto-refresh économe : agit seulement si l'onglet est VISIBLE et qu'au moins 6h se sont écoulées.
+// Un onglet laissé ouvert en arrière-plan (masqué) ne déclenche aucun appel = 0 opération Make.
+const REFRESH_MS = AUTO_REFRESH_HOURS*60*60*1000;
+function maybeRefresh(){ if(document.visibilityState === "visible" && Date.now()-lastLoad >= REFRESH_MS) load(); }
+setInterval(maybeRefresh, 5*60*1000);
+document.addEventListener("visibilitychange", maybeRefresh);
 </script>
 </body>
 </html>
