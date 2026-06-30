@@ -31,15 +31,24 @@
   .ring2{animation-delay:.95s}
   .btn{font-family:'Manrope';font-size:13px;font-weight:600;color:var(--ink);background:var(--card);
     border:1px solid var(--line);padding:9px 15px;border-radius:30px;cursor:pointer;display:inline-flex;
-    align-items:center;gap:7px;transition:transform .15s,border-color .15s,background .15s}
+    align-items:center;gap:7px;transition:transform .15s,border-color .15s}
   .btn:hover{transform:translateY(-2px);border-color:var(--butter)}
-  .btn:active{transform:translateY(0)}
   .btn svg{width:15px;height:15px}
-  .sub{color:var(--muted);font-size:13px;margin:8px 0 22px}
+  .sub{color:var(--muted);font-size:13px;margin:8px 0 18px}
+  .navdots{display:none;justify-content:center;align-items:center;gap:8px;margin:2px 0 16px}
+  .navdot{width:9px;height:9px;border-radius:50%;background:#DDD4C5;transition:all .25s;cursor:pointer}
+  .navdot.on{width:26px;border-radius:6px}
   .board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:start}
   @media(max-width:1100px){.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media(max-width:620px){.board{grid-template-columns:1fr}}
-  .colhead{border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  @media(max-width:620px){
+    .navdots{display:flex}
+    .board{display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;
+      height:calc(100dvh - 150px);scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .board::-webkit-scrollbar{display:none}
+    .board>.col{flex:0 0 100%;scroll-snap-align:center;overflow-y:auto;padding:0 3px;scrollbar-width:none}
+    .board>.col::-webkit-scrollbar{display:none}
+  }
+  .colhead{border-radius:13px;padding:12px 14px;display:flex;align-items:center;gap:9px;margin-bottom:10px;position:sticky;top:0;z-index:2}
   .colnum{font-family:'Sora';font-weight:800;font-size:13px;opacity:.5}
   .colt{font-family:'Sora';font-weight:600;font-size:14px}
   .cnt{font-size:13px;font-weight:700;min-width:24px;height:24px;border-radius:8px;display:flex;
@@ -48,18 +57,18 @@
   .bar i{position:absolute;left:0;top:0;height:100%;border-radius:5px;width:0;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
   .bar .sh{position:absolute;top:0;height:100%;width:34%;background:rgba(255,255,255,.6);
     transform:translateX(-130%);animation:sh 2s ease-in-out 1s infinite}
-  .col-body{min-height:40px;display:flex;flex-direction:column;gap:10px}
+  .col-body{min-height:40px;display:flex;flex-direction:column;gap:10px;padding-bottom:20px}
   .card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:13px;
-    padding:13px 14px;opacity:0;transform:translateY(14px);animation:spring .55s cubic-bezier(.34,1.56,.64,1) forwards;
-    transition:transform .2s ease,box-shadow .2s ease}
-  .card:hover{transform:translateY(-4px) scale(1.012);box-shadow:0 10px 24px -14px rgba(40,30,20,.4)}
-  .card.arch{opacity:.78}
+    padding:13px 14px;cursor:pointer;opacity:0;transform:translateY(14px);
+    animation:spring .55s cubic-bezier(.34,1.56,.64,1) forwards;transition:transform .15s ease,box-shadow .15s ease}
+  .card:hover{transform:translateY(-3px) scale(1.01);box-shadow:0 10px 24px -14px rgba(40,30,20,.4)}
+  .card:active{transform:scale(.985)}
+  .card.arch{opacity:.82}
   .card .no{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.4px}
   .cli{font-weight:700;font-size:14px;line-height:1.3;margin:2px 0 2px}
   .csub{font-size:11.5px;color:var(--muted);margin-bottom:10px}
   .meta{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#7c7989}
   .pd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-  .card:hover .pd{animation:beat .7s ease-in-out infinite}
   .late{color:var(--urgent);font-weight:700}
   .ent{font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#9a958a;
     border:1px solid var(--line);border-radius:5px;padding:2px 6px}
@@ -73,13 +82,43 @@
   .spin{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--butter);
     border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
   .err{color:var(--peach-ink)}
+  .spin-ico{animation:spin .8s linear infinite}
+  /* Fiche détail */
+  .modal-bg{position:fixed;inset:0;background:rgba(33,28,40,.5);display:none;align-items:center;
+    justify-content:center;z-index:60;backdrop-filter:blur(3px);padding:0}
+  .modal-bg.show{display:flex}
+  .modal{background:#fff;width:100%;max-width:480px;border-radius:20px;padding:0;overflow:hidden;
+    box-shadow:0 30px 80px -20px rgba(20,15,30,.5);animation:pop .28s cubic-bezier(.34,1.56,.64,1)}
+  @media(max-width:620px){.modal-bg{align-items:flex-end}.modal{max-width:100%;border-radius:22px 22px 0 0}
+    .modal{animation:slideup .3s ease}}
+  .m-head{display:flex;align-items:flex-start;gap:10px;padding:20px 20px 16px;border-left:5px solid var(--arch)}
+  .m-no{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin-bottom:3px}
+  .m-cli{font-family:'Sora';font-weight:800;font-size:19px;line-height:1.2;color:var(--ink)}
+  .m-x{margin-left:auto;background:#F2EEE6;border:none;width:32px;height:32px;border-radius:50%;
+    font-size:14px;color:var(--muted);cursor:pointer;flex-shrink:0}
+  .m-x:hover{background:#E8E2D6}
+  .m-body{padding:4px 20px 24px}
+  .m-body .row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .m-body .row:last-child{border-bottom:none}
+  .m-body .k{color:var(--muted)}
+  .m-body .v{font-weight:600;text-align:right;color:var(--ink)}
+  .m-lines{padding:2px 20px 26px}
+  .m-lhead{font-family:'Sora';font-weight:600;font-size:13px;color:var(--ink);margin:10px 0 10px}
+  .m-lload{font-size:12.5px;color:var(--muted);font-style:italic;padding:4px 0}
+  .m-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+  .m-tbl th{text-align:left;color:var(--muted);font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:0 0 8px;border-bottom:1px solid var(--line)}
+  .m-tbl td{padding:9px 0;border-bottom:1px solid var(--line);color:var(--ink);vertical-align:top}
+  .m-tbl .r{text-align:right;white-space:nowrap;padding-left:10px}
+  .m-tbl tbody tr:last-child td{border-bottom:none}
+  .m-total{display:flex;justify-content:space-between;align-items:center;font-family:'Sora';font-weight:800;
+    font-size:15px;color:var(--ink);margin-top:12px;padding-top:12px;border-top:2px solid var(--ink)}
   @keyframes tw{0%,100%{transform:scale(1) rotate(0);opacity:1}50%{transform:scale(1.25) rotate(18deg);opacity:.75}}
   @keyframes ring{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.9);opacity:0}}
   @keyframes sh{0%{transform:translateX(-130%)}55%,100%{transform:translateX(430%)}}
   @keyframes spring{to{opacity:1;transform:translateY(0)}}
-  @keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.5)}}
   @keyframes spin{to{transform:rotate(360deg)}}
-  .spin-ico{animation:spin .8s linear infinite}
+  @keyframes pop{from{transform:scale(.92);opacity:.5}to{transform:scale(1);opacity:1}}
+  @keyframes slideup{from{transform:translateY(60px)}to{transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -99,19 +138,24 @@
     <div class="state"><div class="spin"></div>Connexion au flux Notion…</div>
   </div>
 </div>
+<div class="modal-bg" id="modalBg"><div class="modal" id="modalBox"></div></div>
 <script>
-const WEBHOOK = "https://hook.eu2.make.com/tj5sa3qd0lnrl74yu7aqtng0l91b9rwc";   // actif + Terminé du mois -> 3 colonnes
-const ARCHIVES = "https://hook.eu2.make.com/stjl8h28mj6hcs5xjqe6iicomc21iwpt"; // Terminé -> colonne Archives
+const WEBHOOK = "https://hook.eu2.make.com/tj5sa3qd0lnrl74yu7aqtng0l91b9rwc";
+const ARCHIVES = "https://hook.eu2.make.com/stjl8h28mj6hcs5xjqe6iicomc21iwpt";
+const DETAIL = "https://hook.eu2.make.com/89lxy8hglhn6i3arjdyxrmrexw9dibf5";
 const AUTO_REFRESH_MIN = 60;
 const COLS = [
   {name:"Pas commencé", num:"01", hex:"#FF9B85", bg:"var(--peach-bg)",  ink:"var(--peach-ink)"},
   {name:"En cours",     num:"02", hex:"#F5C242", bg:"var(--butter-bg)", ink:"var(--butter-ink)"},
   {name:"Terminé",      num:"03", hex:"#5FD1A0", bg:"var(--mint-bg)",   ink:"var(--mint-ink)"},
 ];
+const ARCH_HEX = "#9B8FB0";
 const PRIO = {"Urgente":"#FF6B5E","Normale":"#F5C242","Faible":"#B8B2A4"};
 const AVA  = {"Chadrak":"#3B82F6","Amra":"#EC4899","Mahaza":"#16C079","Balkissa":"#8B5CF6","Yasmine":"#F59E0B","Raïd":"#14B8A6","Folly":"#EF4444","Enam":"#6B7280"};
+const MOIS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
 let ARCHIVE_DATA = [];
-// ---- Notion property helpers ----
+const ORDERS = {};
+let _idc = 0;
 function P(page,name){ return (page.properties||{})[name] || null; }
 function txtTitle(p){ if(!p||!p.title)return ""; return p.title.map(t=>t.plain_text).join(""); }
 function sel(p){ return p && p.select ? p.select.name : null; }
@@ -122,19 +166,14 @@ function uid(p){ return p && p.unique_id ? p.unique_id.number : null; }
 function cleanName(s){ return s ? s.replace(/[^\p{L}\p{N} \-]/gu,"").trim() : ""; }
 function initial(s){ const c=cleanName(s); return c ? c[0].toUpperCase() : "?"; }
 function avaColor(s){ const c=cleanName(s); for(const k in AVA){ if(c.includes(k)) return AVA[k]; } return "#A8A2B0"; }
-function fmtDate(iso){
-  if(!iso) return null;
-  const d = new Date(iso);
-  if(isNaN(d)) return null;
-  return ("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2);
-}
-function isLate(iso){
-  if(!iso) return false;
-  const d = new Date(iso); const now = new Date(); now.setHours(0,0,0,0);
-  return d < now;
-}
+function fmtDate(iso){ if(!iso) return null; const d=new Date(iso); if(isNaN(d)) return null;
+  return ("0"+d.getDate()).slice(-2)+"/"+("0"+(d.getMonth()+1)).slice(-2); }
+function fmtFull(iso){ if(!iso) return "—"; const d=new Date(iso); if(isNaN(d)) return iso;
+  return d.getDate()+" "+MOIS[d.getMonth()]+" "+d.getFullYear(); }
+function isLate(iso){ if(!iso) return false; const d=new Date(iso); const n=new Date(); n.setHours(0,0,0,0); return d<n; }
 function mapOrder(page){
   return {
+    pid: page.id,
     no: uid(P(page,"N° Commande")),
     client: txtTitle(P(page,"Client")) || "Sans nom",
     statut: status(P(page,"Statut")),
@@ -145,134 +184,174 @@ function mapOrder(page){
     commercial: sel(P(page,"Commercial (suivi paiement)")),
   };
 }
-function esc(s){ return (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+function esc(s){ return (s==null?"":String(s)).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function regId(o){ o._id = (o.no!=null? "n"+o.no : "i"+(_idc++)); ORDERS[o._id]=o; return o._id; }
 function cardHTML(o, accent, delay, archived){
   const dl = fmtDate(o.deadline);
   const late = !archived && o.statut!=="Terminé" && isLate(o.deadline);
   const prioDot = PRIO[o.prio] || "#C9C4BA";
   const presta = o.presta && o.presta.length ? o.presta[0] : "—";
-  const metaBits = [];
-  if(dl) metaBits.push('<span class="'+(late?'late':'')+'">'+(late?'⚠ ':'')+dl+(archived?' · livré':'')+'</span>');
-  if(!archived && o.prio) metaBits.push(esc(o.prio));
-  const meta = metaBits.join(" · ");
-  const av = o.commercial ? '<span class="av" style="background:'+avaColor(o.commercial)+'" title="'+esc(cleanName(o.commercial))+'">'+initial(o.commercial)+'</span>' : "";
+  const bits=[];
+  if(dl) bits.push('<span class="'+(late?'late':'')+'">'+(late?'⚠ ':'')+dl+(archived?' · livré':'')+'</span>');
+  if(!archived && o.prio) bits.push(esc(o.prio));
+  const av = o.commercial ? '<span class="av" style="background:'+avaColor(o.commercial)+'">'+initial(o.commercial)+'</span>' : "";
   const ent = o.entite ? '<span class="ent">'+esc(o.entite)+'</span>' : "";
-  return '<div class="card'+(archived?' arch':'')+'" style="border-left:3px solid '+accent+';border-radius:0 13px 13px 0;animation-delay:'+delay+'s">'
+  return '<div class="card'+(archived?' arch':'')+'" onclick="showDetail(\''+o._id+'\')" style="border-left:3px solid '+accent+';border-radius:0 13px 13px 0;animation-delay:'+delay+'s">'
       + '<div class="no">N°'+(o.no!=null?o.no:"—")+'</div>'
       + '<div class="cli">'+esc(o.client)+'</div>'
       + '<div class="csub">'+esc(presta)+'</div>'
-      + '<div class="meta"><span class="pd" style="background:'+(archived?accent:prioDot)+'"></span>'+meta+av+'</div>'
+      + '<div class="meta"><span class="pd" style="background:'+(archived?accent:prioDot)+'"></span>'+bits.join(" · ")+av+'</div>'
       + (ent?'<div style="margin-top:9px">'+ent+'</div>':'')
       + '</div>';
 }
-function byDeadlineAsc(a,b){ if(!a.deadline) return 1; if(!b.deadline) return -1; return new Date(a.deadline)-new Date(b.deadline); }
-function byDeadlineDesc(a,b){ if(!a.deadline) return 1; if(!b.deadline) return -1; return new Date(b.deadline)-new Date(a.deadline); }
+function byAsc(a,b){ if(!a.deadline) return 1; if(!b.deadline) return -1; return new Date(a.deadline)-new Date(b.deadline); }
+function byDesc(a,b){ if(!a.deadline) return 1; if(!b.deadline) return -1; return new Date(b.deadline)-new Date(a.deadline); }
 function render(active, archiveAll){
+  for(const k in ORDERS) delete ORDERS[k]; _idc=0;
   const buckets = {"Pas commencé":[], "En cours":[], "Terminé":[]};
-  active.forEach(o=>{ if(buckets[o.statut]) buckets[o.statut].push(o); });
-  Object.values(buckets).forEach(arr=>arr.sort(byDeadlineAsc));
-  // Archives = Terminé de plus d'un mois (ou sans date) -> pas de doublon avec la colonne Terminé
+  active.forEach(o=>{ if(buckets[o.statut]){ regId(o); buckets[o.statut].push(o); } });
+  Object.values(buckets).forEach(arr=>arr.sort(byAsc));
   const monthAgo = new Date(); monthAgo.setMonth(monthAgo.getMonth()-1);
-  ARCHIVE_DATA = archiveAll
-    .filter(o=>o.statut==="Terminé" && (!o.deadline || new Date(o.deadline) < monthAgo))
-    .sort(byDeadlineDesc);
+  ARCHIVE_DATA = archiveAll.filter(o=>o.statut==="Terminé" && (!o.deadline || new Date(o.deadline) < monthAgo)).sort(byDesc);
+  ARCHIVE_DATA.forEach(regId);
   const total = active.length || 1;
-  let html = '<div class="board">';
+  let board = '<div class="board" id="board">';
   COLS.forEach(col=>{
     const items = buckets[col.name] || [];
     const pct = Math.round((items.length/total)*100);
-    const body = items.length
-      ? items.map((o,i)=>cardHTML(o, col.hex, 0.15 + i*0.05, false)).join("")
-      : '<div class="empty">Aucune commande</div>';
-    html += '<div class="col">'
-      + '<div class="colhead" style="background:'+col.bg+'">'
-      +   '<span class="colnum" style="color:'+col.ink+'">'+col.num+'</span>'
-      +   '<span class="colt" style="color:'+col.ink+'">'+col.name+'</span>'
-      +   '<span class="cnt" data-count="'+items.length+'" style="background:'+col.hex+'">0</span>'
-      + '</div>'
+    const body = items.length ? items.map((o,i)=>cardHTML(o, col.hex, 0.12+i*0.05, false)).join("") : '<div class="empty">Aucune commande</div>';
+    board += '<div class="col"><div class="colhead" style="background:'+col.bg+'">'
+      + '<span class="colnum" style="color:'+col.ink+'">'+col.num+'</span>'
+      + '<span class="colt" style="color:'+col.ink+'">'+col.name+'</span>'
+      + '<span class="cnt" data-count="'+items.length+'" style="background:'+col.hex+'">0</span></div>'
       + '<div class="bar"><i data-w="'+pct+'" style="background:'+col.hex+'"></i><span class="sh"></span></div>'
-      + '<div class="col-body">'+body+'</div>'
-      + '</div>';
+      + '<div class="col-body">'+body+'</div></div>';
   });
-  // 4e colonne : Archives
-  html += '<div class="col">'
-    + '<div class="colhead" style="background:var(--arch-bg)">'
-    +   '<span class="colnum" style="color:var(--arch-ink)">04</span>'
-    +   '<span class="colt" style="color:var(--arch-ink)">Archives</span>'
-    +   '<span class="cnt" data-count="'+ARCHIVE_DATA.length+'" style="background:var(--arch)">0</span>'
-    + '</div>'
+  board += '<div class="col"><div class="colhead" style="background:var(--arch-bg)">'
+    + '<span class="colnum" style="color:var(--arch-ink)">04</span>'
+    + '<span class="colt" style="color:var(--arch-ink)">Archives</span>'
+    + '<span class="cnt" data-count="'+ARCHIVE_DATA.length+'" style="background:'+ARCH_HEX+'">0</span></div>'
     + '<input class="search" id="archSearch" type="text" placeholder="Rechercher (client, N°)…">'
-    + '<div class="col-body" id="archBody">'+archiveCards(ARCHIVE_DATA)+'</div>'
-    + '</div>';
-  html += '</div>';
-  document.getElementById("content").innerHTML = html;
-  animateMeters();
-  wireArchiveSearch();
+    + '<div class="col-body" id="archBody">'+archiveCards(ARCHIVE_DATA)+'</div></div>';
+  board += '</div>';
+  document.getElementById("content").innerHTML = '<div class="navdots" id="navdots"></div>' + board;
+  animateMeters(); wireArchiveSearch(); setupMobileNav();
   const now = new Date();
-  const totalAll = active.length + ARCHIVE_DATA.length;
   document.getElementById("sub").textContent =
     active.length+" en flux · "+ARCHIVE_DATA.length+" en archives · actualisé à "
     +("0"+now.getHours()).slice(-2)+":"+("0"+now.getMinutes()).slice(-2);
 }
 function archiveCards(list){
   if(!list.length) return '<div class="empty">Aucune archive</div>';
-  return list.map((o,i)=>cardHTML(o, "#9B8FB0", 0.1 + Math.min(i,8)*0.04, true)).join("");
+  return list.map((o,i)=>cardHTML(o, ARCH_HEX, 0.1+Math.min(i,8)*0.04, true)).join("");
 }
 function wireArchiveSearch(){
-  const inp = document.getElementById("archSearch");
-  if(!inp) return;
+  const inp = document.getElementById("archSearch"); if(!inp) return;
   inp.addEventListener("input", function(){
     const q = inp.value.trim().toLowerCase();
     const f = !q ? ARCHIVE_DATA : ARCHIVE_DATA.filter(o=>
-      (o.client && o.client.toLowerCase().includes(q)) ||
-      (o.no!=null && String(o.no).includes(q))
-    );
+      (o.client && o.client.toLowerCase().includes(q)) || (o.no!=null && String(o.no).includes(q)));
     document.getElementById("archBody").innerHTML = archiveCards(f);
   });
 }
+function setupMobileNav(){
+  const board=document.getElementById("board"); const wrap=document.getElementById("navdots");
+  if(!board||!wrap) return;
+  const cols=board.querySelectorAll(".col");
+  wrap.innerHTML="";
+  const hexes=["#FF9B85","#F5C242","#5FD1A0","#9B8FB0"];
+  cols.forEach((c,i)=>{ const d=document.createElement("span"); d.className="navdot"+(i===0?" on":"");
+    d.style.background = i===0? hexes[i] : "#DDD4C5"; d.dataset.i=i; d.dataset.hex=hexes[i];
+    d.addEventListener("click",()=>board.scrollTo({left:i*board.clientWidth,behavior:"smooth"})); wrap.appendChild(d); });
+  const dots=wrap.querySelectorAll(".navdot");
+  let raf=null;
+  board.addEventListener("scroll",()=>{ if(raf) return; raf=requestAnimationFrame(()=>{
+    const i=Math.round(board.scrollLeft/board.clientWidth);
+    dots.forEach((d,j)=>{ const on=j===i; d.classList.toggle("on",on); d.style.background=on?d.dataset.hex:"#DDD4C5"; });
+    raf=null; }); });
+}
+function showDetail(id){
+  const o=ORDERS[id]; if(!o) return;
+  const C={"Pas commencé":"#FF9B85","En cours":"#F5C242","Terminé":"#5FD1A0"};
+  const accent=C[o.statut]||ARCH_HEX;
+  const rows=[
+    ["Statut", o.statut||"—"],
+    ["Priorité", o.prio||"—"],
+    ["Livraison prévue", fmtFull(o.deadline)],
+    ["Prestation", (o.presta&&o.presta.length)?o.presta.join(", "):"—"],
+    ["Entité", o.entite||"—"],
+    ["Commercial", o.commercial?cleanName(o.commercial):"—"]
+  ];
+  let h='<div class="m-head" style="border-color:'+accent+'"><div><div class="m-no">N°'+(o.no!=null?o.no:"—")+'</div>'
+    +'<div class="m-cli">'+esc(o.client)+'</div></div><button class="m-x" onclick="closeDetail()">✕</button></div><div class="m-body">';
+  rows.forEach(r=>{ h+='<div class="row"><span class="k">'+r[0]+'</span><span class="v">'+esc(r[1])+'</span></div>'; });
+  h+='</div>';
+  h+='<div class="m-lines" id="mLines"><div class="m-lhead">Détail de la commande</div><div class="m-lload">Chargement des lignes…</div></div>';
+  document.getElementById("modalBox").innerHTML=h;
+  document.getElementById("modalBg").classList.add("show");
+  loadLines(o.pid);
+}
+function closeDetail(){ document.getElementById("modalBg").classList.remove("show"); }
+function fmtMoney(n){ if(n==null||isNaN(n)) return "—"; return Math.round(n).toLocaleString("fr-FR")+" F"; }
+function lineFields(page){
+  const p = page.properties||{};
+  const des = (p["Désignation"]&&p["Désignation"].title) ? p["Désignation"].title.map(t=>t.plain_text).join("") : "—";
+  const qte = (p["Quantité"]&&p["Quantité"].number!=null) ? p["Quantité"].number : null;
+  const pu  = (p["Prix unitaire"]&&p["Prix unitaire"].number!=null) ? p["Prix unitaire"].number : null;
+  let tot = null;
+  const tl = p["Total ligne"];
+  if(tl&&tl.formula&&tl.formula.number!=null) tot = tl.formula.number;
+  if(tot==null && qte!=null && pu!=null) tot = qte*pu;
+  return {des,qte,pu,tot};
+}
+async function loadLines(pid){
+  const box = document.getElementById("mLines"); if(!box) return;
+  if(!pid){ box.innerHTML='<div class="m-lhead">Détail de la commande</div><div class="m-lload">—</div>'; return; }
+  try{
+    const res = await fetch(DETAIL+"?id="+encodeURIComponent(pid), {cache:"no-store"});
+    const raw = await res.text(); let data;
+    try{ data = JSON.parse(raw); }catch(_){ throw new Error("parse"); }
+    const lines = (data.results||[]).map(lineFields);
+    if(!lines.length){ box.innerHTML='<div class="m-lhead">Détail de la commande</div><div class="m-lload">Aucune ligne enregistrée.</div>'; return; }
+    let total=0; lines.forEach(l=>{ if(l.tot!=null) total+=l.tot; });
+    let h='<div class="m-lhead">Détail de la commande</div>';
+    h+='<table class="m-tbl"><thead><tr><th>Désignation</th><th class="r">Qté</th><th class="r">P.U.</th><th class="r">Montant</th></tr></thead><tbody>';
+    lines.forEach(l=>{ h+='<tr><td>'+esc(l.des)+'</td><td class="r">'+(l.qte!=null?l.qte:"—")+'</td><td class="r">'+fmtMoney(l.pu)+'</td><td class="r">'+fmtMoney(l.tot)+'</td></tr>'; });
+    h+='</tbody></table><div class="m-total"><span>Total</span><span>'+fmtMoney(total)+'</span></div>';
+    box.innerHTML=h;
+  }catch(e){
+    box.innerHTML='<div class="m-lhead">Détail de la commande</div><div class="m-lload">Lignes indisponibles pour le moment.</div>';
+  }
+}
+document.getElementById("modalBg").addEventListener("click",function(e){ if(e.target===this) closeDetail(); });
 function animateMeters(){
-  document.querySelectorAll('.bar i[data-w]').forEach(el=>{
-    requestAnimationFrame(()=>{ el.style.width = el.dataset.w + '%'; });
-  });
+  document.querySelectorAll('.bar i[data-w]').forEach(el=>{ requestAnimationFrame(()=>{ el.style.width=el.dataset.w+'%'; }); });
   document.querySelectorAll('.cnt[data-count]').forEach(el=>{
     const target=+el.dataset.count, dur=850; let t0=null;
     function step(t){ if(!t0)t0=t; const p=Math.min((t-t0)/dur,1); el.textContent=Math.round(p*target); if(p<1)requestAnimationFrame(step); }
-    requestAnimationFrame(step);
-  });
+    requestAnimationFrame(step); });
 }
 function showState(html){ document.getElementById("content").innerHTML = '<div class="state">'+html+'</div>'; }
 async function fetchFeed(url){
   const res = await fetch(url, {method:"GET", cache:"no-store"});
-  const raw = await res.text();
-  let data;
-  try { data = JSON.parse(raw); }
-  catch(_) { throw new Error("Réponse non-JSON : " + raw.slice(0,140)); }
+  const raw = await res.text(); let data;
+  try { data = JSON.parse(raw); } catch(_) { throw new Error("Réponse non-JSON : "+raw.slice(0,140)); }
   if(!res.ok || (data && data.error)){
-    const detail = data && data.error ? (data.error + (data.status?" / "+data.status:"")) : ("HTTP "+res.status);
-    throw new Error(detail);
+    const d = data && data.error ? (data.error+(data.status?" / "+data.status:"")) : ("HTTP "+res.status);
+    throw new Error(d);
   }
   return (data.results || []).map(mapOrder).filter(o=>o.statut);
 }
 async function load(){
-  const ico = document.getElementById("refIco");
-  if(ico) ico.classList.add("spin-ico");
+  const ico=document.getElementById("refIco"); if(ico) ico.classList.add("spin-ico");
   try{
-    const [active, archive] = await Promise.all([
-      fetchFeed(WEBHOOK),
-      fetchFeed(ARCHIVES).catch(()=>[])   // si Archives échoue, on garde les 3 colonnes
-    ]);
-    if(active.length===0){
-      showState("Aucune commande active pour le moment.");
-      document.getElementById("sub").textContent="0 commande active";
-    } else {
-      render(active, archive);
-    }
+    const [active, archive] = await Promise.all([ fetchFeed(WEBHOOK), fetchFeed(ARCHIVES).catch(()=>[]) ]);
+    if(active.length===0){ showState("Aucune commande active pour le moment."); document.getElementById("sub").textContent="0 commande active"; }
+    else render(active, archive);
   }catch(e){
     showState('<div class="err">Connexion au flux impossible.<br><small>'+esc(e.message)+'</small></div><br><button class="btn" onclick="load()">Réessayer</button>');
     document.getElementById("sub").textContent="Erreur de synchronisation";
-  }finally{
-    if(ico) ico.classList.remove("spin-ico");
-  }
+  }finally{ if(ico) ico.classList.remove("spin-ico"); }
 }
 document.getElementById("refresh").addEventListener("click", load);
 load();
